@@ -1,1 +1,1 @@
-alert("Hello Webpack World !");
+(()=>{"use strict";alert("Hello I am Webpack")})();
