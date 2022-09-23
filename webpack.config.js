@@ -37,7 +37,10 @@ module.exports = {
         test: /\.css$/i,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: "css-loader", options: { importLoaders: 1 } },
+          {
+            loader: "css-loader",
+            options: { importLoaders: 1, esModule: false },
+          },
           "postcss-loader",
         ],
       },
@@ -45,9 +48,25 @@ module.exports = {
         test: /\.scss$/i,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: "css-loader", options: { importLoaders: 1 } },
+          {
+            loader: "css-loader",
+            options: { importLoaders: 1, esModule: false },
+          },
           "postcss-loader",
           "sass-loader",
+        ],
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/i,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192,
+              name: "[name].[hash:7].[ext]",
+            },
+          },
+          { loader: "image-webpack-loader" },
         ],
       },
     ],
