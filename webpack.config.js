@@ -2,22 +2,30 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserJSPlugin = require("terser-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   watch: true,
   mode: "production",
   devtool: "eval-cheap-module-source-map",
-  entry: "./src/index.js",
+  entry: { application: "./src/index.js", admin: "./src/admin.js" },
   output: {
-    filename: "application.js",
+    filename: "[name]-[contenthash].js",
     path: path.resolve(__dirname, "build"),
   },
   optimization: {
     minimizer: [new TerserJSPlugin({}), new CssMinimizerPlugin({})],
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      template: "./src/template.html",
+    }),
+    new CleanWebpackPlugin(),
+    new WebpackManifestPlugin(),
     new MiniCssExtractPlugin({
-      filename: "application.css",
+      filename: "[name]-[contenthash].css",
     }),
   ],
 
