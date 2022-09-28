@@ -6,14 +6,32 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
+const mode = "development";
 module.exports = {
-  watch: true,
-  mode: "production",
+  devServer: {
+    port: 9000,
+    static: path.resolve(__dirname, "build"),
+    devMiddleware: {
+      publicPath: "/assets/",
+    },
+    hot: true,
+  },
+  //watch: true,
+  mode: "development",
   devtool: "eval-cheap-module-source-map",
-  entry: { application: "./src/index.js", admin: "./src/admin.js" },
+  entry: {
+    application: "./src/javascripts/index.js",
+    admin: "./src/javascripts/admin.js",
+  },
   output: {
-    filename: "[name]-[contenthash].js",
+    filename: mode === "production" ? "[name]-[contenthash].js" : "[name].js",
     path: path.resolve(__dirname, "build"),
+  },
+  resolve: {
+    alias: {
+      CssFolder: path.resolve(__dirname, "src/stylesheets/"),
+    },
+    modules: [path.resolve(__dirname, "src/downloaded_libs"), "node_modules"],
   },
   optimization: {
     minimizer: [new TerserJSPlugin({}), new CssMinimizerPlugin({})],
@@ -25,7 +43,8 @@ module.exports = {
     new CleanWebpackPlugin(),
     new WebpackManifestPlugin(),
     new MiniCssExtractPlugin({
-      filename: "[name]-[contenthash].css",
+      filename:
+        mode === "production" ? "[name]-[contenthash].css" : "[name].css",
     }),
   ],
 
@@ -71,7 +90,10 @@ module.exports = {
             loader: "url-loader",
             options: {
               limit: 8192,
-              name: "[name].[hash:7].[ext]",
+              name:
+                mode === "production"
+                  ? "[name]-[hash:7].[ext]"
+                  : "[name].[ext]",
             },
           },
           { loader: "image-webpack-loader" },
